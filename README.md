@@ -11,6 +11,7 @@ This repository contains the code to establish the two-level hierarchical RL fra
 ```
 pip install virtualenv
 virtualenv -p python3.7.17 myenv
+source myenv/bin/activate
 workon myenv
 pip install -r requirements.txt
 ```
