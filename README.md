@@ -3,7 +3,10 @@
 [![Python](https://img.shields.io/badge/python-3.7.17-blue)](https://www.python.org)
 
 
-Tongzhao Xiong, Zhaorong Liu, Yufei Wang, Chong Jin Ong, Lailai Zhu* 
+Tongzhao Xiong, Zhaorong Liu, Yufei Wang, Chong Jin Ong, Lailai Zhu
+
+Department of Mechanical Engineering, National University of Singapore
+
 <hr style="border: 2px solid gray;"></hr>
 
 This repository contains the code to establish the two-level hierarchical RL framework for the autonomous chemotactic navigation of the microrobots. Here, we focus on a flagellar swimmer with $9$ hinges and an ameboid swimmer with $20$ hinges.
