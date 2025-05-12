@@ -30,7 +30,7 @@ python train.py
 2. High level: chemotactic navigation towards a static chemical source, towards a moving chemical source, within an ambient flow, and through a narrow constriction. 
 ```
 python discretization.py
-#Next command is merely for the constricted space
+#The following execuation is only for the constricted scenario.
 python constriction_discrete.py
 #
 python train.py
