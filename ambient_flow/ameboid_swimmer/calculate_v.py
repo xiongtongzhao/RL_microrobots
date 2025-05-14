@@ -20,13 +20,7 @@ folder_name = path.basename(directory_path)
 
 Ut=0.0005
 
-Xf_match_q_wall=torch.load(  'Xf_match_q_wall.pt')
-Yf_match_q_wall=torch.load( 'Yf_match_q_wall.pt')
-Zf_match_q_wall=torch.load( 'Zf_match_q_wall.pt')
-Xf_all_wall=torch.load( 'Xf_all_wall.pt')
-Yf_all_wall=torch.load( 'Yf_all_wall.pt')
-Zf_all_wall=torch.load( 'Zf_all_wall.pt')
-Min_Distance_num_wall=torch.load( 'Min_Distance_num_wall.pt')
+
 
 Xf_match_q_fila=torch.load(  'Xf_match_q_fila.pt')
 Yf_match_q_fila=torch.load( 'Yf_match_q_fila.pt')
@@ -37,16 +31,16 @@ Zf_all_fila=torch.load( 'Zf_all_fila.pt')
 Label_Matrix_fila=torch.load( 'Min_Distance_Label_Fila.pt')
 Min_Distance_num_fila=torch.load( 'Min_Distance_num_fila.pt')
 Min_Distance_Label_fila=torch.load( 'Correponding_label_fila.pt')  #labels of stokeslet points correpsonding to the force points in fila
-Min_Distance_Label_wall=torch.load( 'Correponding_label_wall.pt') 
+
 
 
 device = torch.device('cpu')
 NL=20
-N=int(NL*4)
-N_dense=int(NL*8)
-torch.set_num_threads(4)
+N=int(NL*2)
+N_dense=int(NL*4)
+torch.set_num_threads(10)
 
-Wall_point_num=Xf_all_wall.shape[0]
+
 Fila_point_num=Xf_all_fila.shape[0]
 
 
@@ -60,60 +54,31 @@ P_fila_fila_sum=torch.zeros((Fila_point_num,Xf_match_q_fila.shape[0],3),dtype=to
 
 
 
-S_wall_wall=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1],3,3),dtype=torch.double)
-B_wall_wall=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1],3,3),dtype=torch.double)
-S_wall_wall_sum=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],3,3),dtype=torch.double)
-B_wall_wall_sum=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],3,3),dtype=torch.double)
-
-P_wall_wall=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1],3),dtype=torch.double)
-P_wall_wall_sum=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],3),dtype=torch.double)
-
-S_fila_wall=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1],3,3),dtype=torch.double)
-B_fila_wall=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1],3,3),dtype=torch.double)
-S_fila_wall_sum=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],3,3),dtype=torch.double)
-B_fila_wall_sum=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],3,3),dtype=torch.double)
-
-P_fila_wall=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1],3),dtype=torch.double)
-P_fila_wall_sum=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],3),dtype=torch.double)
-
-S_wall_fila=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1],3,3),dtype=torch.double)
-B_wall_fila=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1],3,3),dtype=torch.double)
-S_wall_fila_sum=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],3,3),dtype=torch.double)
-B_wall_fila_sum=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],3,3),dtype=torch.double)
-
-P_wall_fila=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1],3),dtype=torch.double)
-P_wall_fila_sum=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],3),dtype=torch.double)
 
 
 Xf_match_q_fila=Xf_match_q_fila.view(1,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1])
 Yf_match_q_fila=Yf_match_q_fila.view(1,Yf_match_q_fila.shape[0],Yf_match_q_fila.shape[1])
 Zf_match_q_fila=Zf_match_q_fila.view(1,Zf_match_q_fila.shape[0],Zf_match_q_fila.shape[1])
 
-Xf_match_q_wall=Xf_match_q_wall.view(1,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1])
-Yf_match_q_wall=Yf_match_q_wall.view(1,Yf_match_q_wall.shape[0],Yf_match_q_wall.shape[1])
-Zf_match_q_wall=Zf_match_q_wall.view(1,Zf_match_q_wall.shape[0],Zf_match_q_wall.shape[1])
+
 
 
 Xf_all_fila=Xf_all_fila.view(-1,1,1)
 Yf_all_fila=Yf_all_fila.view(-1,1,1)
 Zf_all_fila=Zf_all_fila.view(-1,1,1)
 
-Xf_all_wall=Xf_all_wall.view(-1,1,1)
-Yf_all_wall=Yf_all_wall.view(-1,1,1)
-Zf_all_wall=Zf_all_wall.view(-1,1,1)
 
-A=torch.zeros(((Wall_point_num+Fila_point_num)*3,(Wall_point_num+Fila_point_num)*3),dtype=torch.double,device=device)
-A_wall_wall=    torch.zeros(((Wall_point_num)*3,(Wall_point_num)*3),dtype=torch.double,device=device)
+
+
 A_fila_fila=    torch.zeros(((Fila_point_num)*3,(Fila_point_num)*3),dtype=torch.double,device=device)
-A_wall_fila=    torch.zeros(((Wall_point_num)*3,(Fila_point_num)*3),dtype=torch.double,device=device)
-A_fila_wall=    torch.zeros(((Fila_point_num)*3,(Wall_point_num)*3),dtype=torch.double,device=device)
 
 
-PA=torch.zeros(((Fila_point_num),(Wall_point_num+Fila_point_num)*3),dtype=torch.double,device=device)
+
+
 
 PA_fila_fila=    torch.zeros(((Fila_point_num),(Fila_point_num)*3),dtype=torch.double,device=device)
 
-PA_fila_wall=    torch.zeros(((Fila_point_num),(Wall_point_num)*3),dtype=torch.double,device=device)
+
 
 
 
@@ -121,23 +86,6 @@ delta_x_fila_fila=torch.zeros((Fila_point_num,Xf_match_q_fila.shape[0],Xf_match_
 delta_y_fila_fila=torch.zeros((Fila_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1]),dtype=torch.double)
 delta_z_fila_fila=torch.zeros((Fila_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1]),dtype=torch.double)
 delta_z_I_fila_fila=torch.zeros((Fila_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1]),dtype=torch.double)
-
-delta_x_wall_wall=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1]),dtype=torch.double)
-delta_y_wall_wall=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1]),dtype=torch.double)
-delta_z_wall_wall=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1]),dtype=torch.double)
-delta_z_I_wall_wall=torch.zeros((Wall_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1]),dtype=torch.double)
-
-delta_x_fila_wall=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1]),dtype=torch.double)
-delta_y_fila_wall=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1]),dtype=torch.double)
-delta_z_fila_wall=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1]),dtype=torch.double)
-delta_z_I_fila_wall=torch.zeros((Fila_point_num,Xf_match_q_wall.shape[0],Xf_match_q_wall.shape[1]),dtype=torch.double)
-
-delta_x_wall_fila=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1]),dtype=torch.double)
-delta_y_wall_fila=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1]),dtype=torch.double)
-delta_z_wall_fila=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1]),dtype=torch.double)
-delta_z_I_wall_fila=torch.zeros((Wall_point_num,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1]),dtype=torch.double)
-
-
 
 
 
@@ -417,46 +365,34 @@ def blakelet_wall_fila(x1,x2,x3,h,e):
 
 def M1M2(e):
     global S_fila_fila
-    global S_wall_wall    
-    global S_wall_fila
-    global S_fila_wall    
+
     
     global B_fila_fila
-    global B_wall_wall    
-    global B_wall_fila
-    global B_fila_wall    
+  
     
     
     global S_fila_fila_sum
-    global S_wall_wall_sum    
-    global S_wall_fila_sum
-    global S_fila_wall_sum    
+  
     
     global B_fila_fila_sum
-    global B_wall_wall_sum    
-    global B_wall_fila_sum
-    global B_fila_wall_sum
+
     
     global P_fila_fila_sum
-    global P_wall_wall_sum    
-    global P_wall_fila_sum
-    global P_fila_wall_sum    
-    
+
    
     
     
     
     global A
-    global A_wall_wall
+
     global A_fila_fila
-    global A_wall_fila
-    global A_fila_wall
+
     
     global PA
 
     global PA_fila_fila
 
-    global PA_fila_wall    
+   
     
     
     
@@ -465,21 +401,7 @@ def M1M2(e):
     global delta_z_fila_fila
     global delta_z_I_fila_fila
 
-    global delta_x_fila_wall
-    global delta_y_fila_wall
-    global delta_z_fila_wall
-    global delta_z_I_fila_wall
-    
-    global delta_x_wall_fila
-    global delta_y_wall_fila
-    global delta_z_wall_fila
-    global delta_z_I_wall_fila
-    
-    global delta_x_wall_wall
-    global delta_y_wall_wall
-    global delta_z_wall_wall
-    global delta_z_I_wall_wall    
-   
+
     global Xf_match_q_fila
     global Yf_match_q_fila    
     global Zf_match_q_fila   
@@ -487,7 +409,7 @@ def M1M2(e):
     global Yf_all_fila    
     global Zf_all_fila 
     
-    Wall_point_num=Xf_all_wall.shape[0]
+
     Fila_point_num=Xf_all_fila.shape[0]
 
     #print(Xf_all_fila.shape,Xf_match_q_fila.shape)
@@ -919,7 +841,7 @@ def Calculate_velocity(x,w,x_first):
     output=np.concatenate((velon,action))
     
     
-    D1y,D2y,D1x,D2x=MatrixD_position(beta_ini,Xini,Yini,1.0/NL)
+    D1y,D2y,D1x,D2x=MatrixD_position(beta_ini,Xini,Yini,1.0)
     #print(D1y)
     Yp=torch.matmul(D1y,torch.ones((NL,1),dtype=torch.double,device=device))+D2y
     Xp=torch.matmul(D1x,torch.ones((NL,1),dtype=torch.double,device=device))+D2x   
@@ -993,8 +915,8 @@ def initial(x,w,x_first):
     bg_flow_U=Yposition.clone()
 #     bg_flow_r=torch.norm(bg_flow_U, dim=1)
 
-    bg_flow_U=Ut*torch.cat(((torch.cos(math.pi*Yposition[:,0]/(NL))*torch.sin(math.pi*Yposition[:,1]/(NL))).reshape(-1,1)\
-                         ,-(torch.cos(math.pi*Yposition[:,1]/(NL))*torch.sin(math.pi*Yposition[:,0]/(NL))).reshape(-1,1)),dim=0)
+    bg_flow_U=Ut*torch.cat(((torch.cos(math.pi*Yposition[:,0])*torch.sin(math.pi*Yposition[:,1])).reshape(-1,1)\
+                         ,-(torch.cos(math.pi*Yposition[:,1])*torch.sin(math.pi*Yposition[:,0])).reshape(-1,1)),dim=0)
     bg_flow_U=bg_flow_U.reshape(1,-1)    
 
 
@@ -1136,3 +1058,4 @@ def RK(x,w,x_first):
     
     
     
+
