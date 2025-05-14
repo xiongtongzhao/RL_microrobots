@@ -400,10 +400,8 @@ class swimmer_gym(gym.Env):
         if self.it==0:
             self.state=np.loadtxt('state.pt', delimiter=',')
             self.XY_positions=np.loadtxt('XY_positions.pt', delimiter=',')
-            self.Xfirst=np.loadtxt('Xfirst.pt', delimiter=',')
-        con=self.get_concentration(self.XY_positions)
-        con=np.squeeze(con)
-        self.Clist=con.copy()        
+
+        
 
         #self.it=0
         
@@ -424,6 +422,7 @@ class swimmer_gym(gym.Env):
        
         con=np.squeeze(con)   
         self.con=np.sum(con)
+        self.Clist=con.copy()
         if con[0]<=con[-1]:
             self.order=np.random.randint(3)
         else:
@@ -447,5 +446,6 @@ class swimmer_gym(gym.Env):
         if self.viewer:
             self.viewer.close()
             self.viewer = None
+
 
 
