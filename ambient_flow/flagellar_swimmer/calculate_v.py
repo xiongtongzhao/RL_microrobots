@@ -13,12 +13,12 @@ import time
 
 directory_path = os.getcwd()
 folder_name = path.basename(directory_path)
-
+Ut=0.005
 
 # N=int(int(folder_name)*10)
 # NL=int(folder_name)
 
-Ut=0.005
+
 
 
 
@@ -35,10 +35,11 @@ Min_Distance_Label_fila=torch.load( 'Correponding_label_fila.pt')  #labels of st
 
 
 device = torch.device('cpu')
-NL=20
-N=int(NL*2)
+
+NL=10
 N_dense=int(NL*4)
-torch.set_num_threads(10)
+N=int(NL*2)
+torch.set_num_threads(5)
 
 
 Fila_point_num=Xf_all_fila.shape[0]
@@ -56,6 +57,7 @@ P_fila_fila_sum=torch.zeros((Fila_point_num,Xf_match_q_fila.shape[0],3),dtype=to
 
 
 
+
 Xf_match_q_fila=Xf_match_q_fila.view(1,Xf_match_q_fila.shape[0],Xf_match_q_fila.shape[1])
 Yf_match_q_fila=Yf_match_q_fila.view(1,Yf_match_q_fila.shape[0],Yf_match_q_fila.shape[1])
 Zf_match_q_fila=Zf_match_q_fila.view(1,Zf_match_q_fila.shape[0],Zf_match_q_fila.shape[1])
@@ -66,6 +68,7 @@ Zf_match_q_fila=Zf_match_q_fila.view(1,Zf_match_q_fila.shape[0],Zf_match_q_fila.
 Xf_all_fila=Xf_all_fila.view(-1,1,1)
 Yf_all_fila=Yf_all_fila.view(-1,1,1)
 Zf_all_fila=Zf_all_fila.view(-1,1,1)
+
 
 
 
@@ -90,34 +93,9 @@ delta_z_I_fila_fila=torch.zeros((Fila_point_num,Xf_match_q_fila.shape[0],Xf_matc
 
 
 
+
+
 mu=1
-
-
-def cal_remaining_w(x,w):
-#     w=np.squeeze(w)
-#     x=np.squeeze(x)
-    
-    A=np.ones((3,NL),dtype=np.double)
-  
-    theta=np.zeros(NL,dtype=np.double)
-    for i in range(NL):
-        theta[i]=np.sum(x[3:i+4])
-    stheta=np.sin(theta)
-    ctheta=np.cos(theta)
-    
-    for i in range(NL):
-        A[1,i]=np.sum(stheta[i:])
-        A[2,i]=np.sum(ctheta[i:])    
-    AA=np.linalg.pinv(A)
-    v=np.dot(np.identity(NL)-np.dot(AA,A),w) 
-    if np.max(abs(v))>1:
-        v/=np.max(abs(v))
-    return v
-
-
-
-
-
 
 def pressurelet_fila_fila(x,y,z,e):
 
@@ -365,20 +343,21 @@ def blakelet_wall_fila(x1,x2,x3,h,e):
 
 def M1M2(e):
     global S_fila_fila
-
+   
     
     global B_fila_fila
-  
+
     
     
     global S_fila_fila_sum
-  
+   
     
     global B_fila_fila_sum
 
     
     global P_fila_fila_sum
 
+    
    
     
     
@@ -401,7 +380,8 @@ def M1M2(e):
     global delta_z_fila_fila
     global delta_z_I_fila_fila
 
-
+   
+   
     global Xf_match_q_fila
     global Yf_match_q_fila    
     global Zf_match_q_fila   
@@ -459,7 +439,7 @@ def M1M2(e):
 #     PA_fila_wall[:,Wall_point_num*2:Wall_point_num*3]=P_fila_wall_sum[:,:,2]
     
 
-#     PA=torch.cat((PA_fila_fila,PA_fila_wall),dim=1) 
+    #PA=torch.cat((PA_fila_fila,PA_fila_wall),dim=1) 
     PA=PA_fila_fila
     stokeslet_fila_fila(delta_x_fila_fila,delta_y_fila_fila,delta_z_fila_fila,e)
 #     stokeslet_fila_wall(delta_x_fila_wall,delta_y_fila_wall,delta_z_fila_wall,e)    
@@ -468,15 +448,15 @@ def M1M2(e):
     
     
     
-    blakelet_fila_fila(delta_x_fila_fila,delta_y_fila_fila,delta_z_I_fila_fila,-Zf_match_q_fila,e)
+#    blakelet_fila_fila(delta_x_fila_fila,delta_y_fila_fila,delta_z_I_fila_fila,-Zf_match_q_fila,e)
 #     blakelet_fila_wall(delta_x_fila_wall,delta_y_fila_wall,delta_z_I_fila_wall,-Zf_match_q_wall,e)    
 #     blakelet_wall_wall(delta_x_wall_wall,delta_y_wall_wall,delta_z_I_wall_wall,-Zf_match_q_wall,e)
 #     blakelet_wall_fila(delta_x_wall_fila,delta_y_wall_fila,delta_z_I_wall_fila,-Zf_match_q_fila,e)   
 #     print(-Zf_match_q_fila)
     
     S_fila_fila_sum=torch.sum(S_fila_fila,dim=2)
-#     B_fila_fila_sum=torch.sum(B_fila_fila,dim=2)
-#     S_fila_fila_sum+= B_fila_fila_sum
+#    B_fila_fila_sum=torch.sum(B_fila_fila,dim=2)
+#    S_fila_fila_sum+= B_fila_fila_sum
     
 #     S_fila_wall_sum=torch.sum(S_fila_wall,dim=2)
 #     B_fila_wall_sum=torch.sum(B_fila_wall,dim=2)
@@ -524,8 +504,8 @@ def M1M2(e):
 #     A_wall_wall[Wall_point_num*2:Wall_point_num*3,0:Wall_point_num]=S_wall_wall_sum[:,:,2,0]
 #     A_wall_wall[Wall_point_num*2:Wall_point_num*3,Wall_point_num:Wall_point_num*2]=S_wall_wall_sum[:,:,2,1]                    
 #     A_wall_wall[Wall_point_num*2:Wall_point_num*3,Wall_point_num*2:Wall_point_num*3]=S_wall_wall_sum[:,:,2,2]        
-#     
-#     
+    
+    
 #     A_wall_fila[0:Wall_point_num,0:Fila_point_num]=S_wall_fila_sum[:,:,0,0]
 #     A_wall_fila[0:Wall_point_num,Fila_point_num:Fila_point_num*2]=S_wall_fila_sum[:,:,0,1]                    
 #     A_wall_fila[0:Wall_point_num,Fila_point_num*2:Fila_point_num*3]=S_wall_fila_sum[:,:,0,2]    
@@ -538,16 +518,11 @@ def M1M2(e):
 #     
 #     
 #     
-#     A1=torch.cat((A_wall_fila,A_wall_wall),dim=1)
-#     A2=torch.cat((A_fila_fila,A_fila_wall),dim=1)
-#     A=torch.cat((A2,A1),dim=0)
+
+    
     A=A_fila_fila
-    PA_mix=torch.zeros((NL,PA.shape[1]),dtype=torch.double)
-    for i in range(NL):
-        PA_mix[i,:]=PA[int(i/NL*PA.shape[0]),:]/(8*math.pi*mu)
-        
     #print(A_fila_fila)
-    return A/(8*math.pi*mu),PA_mix
+    return A/(8*math.pi*mu),PA[0,:]/(8*math.pi*mu),PA[-1,:]/(8*math.pi*mu)
 
 
 
@@ -565,18 +540,18 @@ def MatrixQ(L,theta,Qu,Q1,Ql,Q2):
 
 def MatrixQp(L,theta):
     
-    Qu=torch.cat((torch.ones((N),dtype=torch.double,device=device).reshape(-1,1),torch.zeros((N),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
-    Ql=torch.cat((torch.zeros((N),dtype=torch.double,device=device).reshape(-1,1),torch.ones((N),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
+    Qu=torch.cat((torch.ones((N+1),dtype=torch.double,device=device).reshape(-1,1),torch.zeros((N+1),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
+    Ql=torch.cat((torch.zeros((N+1),dtype=torch.double,device=device).reshape(-1,1),torch.ones((N+1),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
     q1=L*torch.cos(theta[2:])
     q2=L*torch.sin(theta[2:])
    
     
 
-    Q1=q1.reshape(1,-1).repeat(N,1)
+    Q1=q1.reshape(1,-1).repeat(N+1,1)
     
     Q1=torch.tril(Q1,-1)
     
-    Q2=q2.reshape(1,-1).repeat(N,1)
+    Q2=q2.reshape(1,-1).repeat(N+1,1)
     
     Q2=torch.tril(Q2,-1)    
     
@@ -586,43 +561,43 @@ def MatrixQp(L,theta):
 #     Q_up=torch.cat((Qu,Q1),dim=1)
 #     Q_down=torch.cat((Ql,Q2),dim=1)
 #     Q=torch.cat((Q_up,Q_down),dim=0)
-    Q=Q.reshape(2*(N),-1)
+    Q=Q.reshape(2*(N+1),-1)
     
     return Q,Qu,Q1,Ql,Q2
 
 def MatrixQp_dense(L,theta):
     
-    Qu=torch.cat((torch.ones((N_dense),dtype=torch.double,device=device).reshape(-1,1),torch.zeros((N_dense),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
-    Ql=torch.cat((torch.zeros((N_dense),dtype=torch.double,device=device).reshape(-1,1),torch.ones((N_dense),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
+    Qu=torch.cat((torch.ones((N_dense+1),dtype=torch.double,device=device).reshape(-1,1),torch.zeros((N_dense+1),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
+    Ql=torch.cat((torch.zeros((N_dense+1),dtype=torch.double,device=device).reshape(-1,1),torch.ones((N_dense+1),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
     q1=L*torch.cos(theta[2:])
     q2=L*torch.sin(theta[2:])
    
     
 
-    Q1=q1.reshape(1,-1).repeat(N_dense,1)
+    Q1=q1.reshape(1,-1).repeat(N_dense+1,1)
     
     Q1=torch.tril(Q1,-1)
     
-    Q2=q2.reshape(1,-1).repeat(N_dense,1)
+    Q2=q2.reshape(1,-1).repeat(N_dense+1,1)
     
     Q2=torch.tril(Q2,-1)    
     
 
     
     Q=torch.cat((Qu,Q1,Ql,Q2),dim=1) 
-    Q=Q.reshape(2*(N_dense),-1)
+    Q=Q.reshape(2*(N_dense+1),-1)
 
     return Q,Qu,Q1,Ql,Q2
 
 
 def MatrixB(L,theta,Y):
     
-    B1=0.5*torch.cat((2*torch.ones((N),dtype=torch.double,device=device).reshape(-1,1),torch.zeros((N),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
+    B1=0.5*torch.cat((2*torch.ones((N+1),dtype=torch.double,device=device).reshape(-1,1),torch.zeros((N+1),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
     B1[0,0]=0.5
     B1[-1,0]=0.5
     B1=B1.reshape(1,-1)
 #     
-    B2=0.5*torch.cat((torch.zeros((N),dtype=torch.double,device=device).reshape(-1,1),2*torch.ones((N),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
+    B2=0.5*torch.cat((torch.zeros((N+1),dtype=torch.double,device=device).reshape(-1,1),2*torch.ones((N+1),dtype=torch.double,device=device).reshape(-1,1)),dim=1)
     B2[0,1]=0.5
     B2[-1,1]=0.5
     B2=B2.reshape(1,-1)
@@ -678,11 +653,11 @@ def MatrixB(L,theta,Y):
     return B
 
 def MatrixC(action_absolute):
-    C1=torch.zeros((N+1,3),dtype=torch.double,device=device)
+    C1=torch.zeros((N+2,3),dtype=torch.double,device=device)
     C1[0,0]=1
     C1[1,1]=1
     C1[2:,2]=1
-    C2=torch.zeros((N+1,1),dtype=torch.double,device=device)
+    C2=torch.zeros((N+2,1),dtype=torch.double,device=device)
     C2[3:,:]=action_absolute.view(-1,1) #N-1,1, start's rotation velocity removed
     #print(C1,C2)
     return C1, C2
@@ -691,9 +666,9 @@ def MatrixC(action_absolute):
 
 
 def MatrixD_sum(beta_ini,absU):
-    D1=torch.zeros((NL*2,3),dtype=torch.double,device=device)
-    D2=torch.zeros((NL*2,1),dtype=torch.double,device=device)
-    for i in range(NL):
+    D1=torch.zeros((NL*2+2,3),dtype=torch.double,device=device)
+    D2=torch.zeros((NL*2+2,1),dtype=torch.double,device=device)
+    for i in range(NL+1):
         if i==0:
             D1[i*2,0]=1
             D1[i*2+1,1]=1            
@@ -703,36 +678,36 @@ def MatrixD_sum(beta_ini,absU):
                        
         elif i==1:
             D1[i*2,0]=1
-            D1[i*2,2]=  D1[(i-1)*2,2] -sin(beta_ini[i-1])/NL
+            D1[i*2,2]=  D1[(i-1)*2,2] -sin(beta_ini[i-1])*1.0/NL
             D1[i*2+1,1]=1             
-            D1[i*2+1,2]= D1[(i-1)*2+1,2] +cos(beta_ini[i-1])/NL         
+            D1[i*2+1,2]= D1[(i-1)*2+1,2] +cos(beta_ini[i-1])*1.0/NL           
            
             D2[i*2,:]=D2[(i-1)*2,:]
             D2[i*2+1,:]=D2[(i-1)*2+1,:]          
         else:
             D1[i*2,0]=1
-            D1[i*2,2]=  D1[(i-1)*2,2] -sin(beta_ini[i-1])/NL
+            D1[i*2,2]=  D1[(i-1)*2,2] -sin(beta_ini[i-1])*1.0/NL
             D1[i*2+1,1]=1             
-            D1[i*2+1,2]= D1[(i-1)*2+1,2] +cos(beta_ini[i-1])/NL       
+            D1[i*2+1,2]= D1[(i-1)*2+1,2] +cos(beta_ini[i-1])*1.0/NL        
            
-            D2[i*2,:]=D2[(i-1)*2,:]-absU[i-2]*sin(beta_ini[i-1])/NL
-            D2[i*2+1,:]=D2[(i-1)*2+1,:]+absU[i-2]*cos(beta_ini[i-1])/NL
+            D2[i*2,:]=D2[(i-1)*2,:]-absU[i-2]*sin(beta_ini[i-1])*1.0/NL
+            D2[i*2+1,:]=D2[(i-1)*2+1,:]+absU[i-2]*cos(beta_ini[i-1])*1.0/NL
    
     return D1, D2
 
 
 def MatrixD_position(beta_ini,Xini,Yini,L):
-    D1=torch.zeros((NL,NL),dtype=torch.double,device=device)
-    D2=torch.ones((NL,1),dtype=torch.double,device=device)*Yini
-    D1x=torch.zeros((NL,NL),dtype=torch.double,device=device)
-    D2x=torch.ones((NL,1),dtype=torch.double,device=device)*Xini    
-    for i in range(NL):
+    D1=torch.zeros((NL+1,NL),dtype=torch.double,device=device)
+    D2=torch.ones((NL+1,1),dtype=torch.double,device=device)*Yini
+    D1x=torch.zeros((NL+1,NL),dtype=torch.double,device=device)
+    D2x=torch.ones((NL+1,1),dtype=torch.double,device=device)*Xini    
+    for i in range(NL+1):
         if i==0:
             D1[i,:]=0
             D1x[i,:]=0
         else:
-            D1[i,:i]=torch.sin(beta_ini[:i])/NL
-            D1x[i,:i]=torch.cos(beta_ini[:i])/NL  
+            D1[i,:i]=torch.sin(beta_ini[:i])*L
+            D1x[i,:i]=torch.cos(beta_ini[:i])*L   
     return D1, D2,D1x,D2x
 
 
@@ -778,7 +753,7 @@ def Calculate_velocity(x,w,x_first):
     
     
     
-    A,Ap_mix=M1M2(e)
+    A,Ap_start,Ap_end=M1M2(e)
     
     B_supply=torch.zeros((3,A.shape[0]-B.shape[1]))
     B_all=torch.cat((B,B_supply),dim=1)
@@ -799,8 +774,8 @@ def Calculate_velocity(x,w,x_first):
     AB=AB[:,:B.shape[1]]    
         
     MT=torch.matmul(AB,Q)     
-
-    bg_flow= torch.matmul((AB),bg_flow_U.view(-1,1))  
+    #print(bg_flow_U)
+    bg_flow= torch.matmul((AB),bg_flow_U.view(-1,1))
        
     M=torch.matmul(MT,C1)
 
@@ -817,22 +792,22 @@ def Calculate_velocity(x,w,x_first):
 
 
 #     print(C1.shape,C2.shape)
-    velo_points_all=torch.matmul(Q,velo_points)
-    velo_points_fila=torch.zeros(((Fila_point_num)*3,1),dtype=torch.double,device=device)
-    velo_points_fila[:Fila_point_num*2,:]=velo_points_all    
+    velo_points_all=torch.matmul(Q,velo_points)    
 #    veloall=torch.matmul(D1,velo)+D2
 #     velo_points_filawall=torch.zeros(((Wall_point_num+Fila_point_num)*3,1),dtype=torch.double,device=device)   
 #     velo_points_filawall[:Fila_point_num*2,:]=velo_points_all
+    velo_points_fila=torch.zeros(((Fila_point_num)*3,1),dtype=torch.double,device=device)
+    velo_points_fila[:Fila_point_num*2,:]=velo_points_all - bg_flow_U.view(-1,1) 
     force_points_filawall= torch.linalg.solve(A, velo_points_fila)
     
-    pressure_all=torch.matmul(Ap_mix,force_points_filawall.reshape(-1,1))    
+    pressure_start=torch.matmul(Ap_start.reshape(1,-1),force_points_filawall.reshape(-1,1))    
+    pressure_end=torch.matmul(Ap_end.reshape(1,-1),force_points_filawall.reshape(-1,1))
     
     
     
-    
-#     veloall[0]=0.5*(veloall[0]+veloall[-2])
-#     veloall[1]=0.5*(veloall[1]+veloall[-1])
-#     veloall=veloall[:-2]
+    veloall[0]=0.5*(veloall[0]+veloall[-2])
+    veloall[1]=0.5*(veloall[1]+veloall[-1])
+    veloall=veloall[:-2]
     velon=velo.copy()
     
     velon[0]=torch.mean(veloall[::2])
@@ -841,12 +816,12 @@ def Calculate_velocity(x,w,x_first):
     output=np.concatenate((velon,action))
     
     
-    D1y,D2y,D1x,D2x=MatrixD_position(beta_ini,Xini,Yini,1.0)
+    D1y,D2y,D1x,D2x=MatrixD_position(beta_ini,Xini,Yini,1.0/NL)
     #print(D1y)
     Yp=torch.matmul(D1y,torch.ones((NL,1),dtype=torch.double,device=device))+D2y
     Xp=torch.matmul(D1x,torch.ones((NL,1),dtype=torch.double,device=device))+D2x   
     #print(Yp)
-    return output,velo,np.squeeze(Xp.numpy()),np.squeeze(Yp.numpy()),pressure_all
+    return output,velo,np.squeeze(Xp.numpy()),np.squeeze(Yp.numpy()),pressure_end-pressure_start,pressure_end
 
 
 
@@ -892,15 +867,15 @@ def initial(x,w,x_first):
     # beta2_ini=0
     # beta3_ini=0
     # beta4_ini=0
-    theta=torch.zeros((N+1),dtype=torch.double,device=device)
-    forQp=torch.ones((N+1),dtype=torch.double,device=device)
+    theta=torch.zeros((N+2),dtype=torch.double,device=device)
+    forQp=torch.ones((N+2),dtype=torch.double,device=device)
     forQp[0]=Xini
     forQp[1]=Yini
 
     theta[0]=Xini
     theta[1]=Yini
 
-    for i in range(N-1):
+    for i in range(N):
         theta[i+2]=beta_ini[int((i)/(N/NL))]    
 
 
@@ -911,18 +886,15 @@ def initial(x,w,x_first):
     
     
     Yposition=Yposition.reshape(-1,2)
-
     bg_flow_U=Yposition.clone()
 #     bg_flow_r=torch.norm(bg_flow_U, dim=1)
 
-    bg_flow_U=Ut*torch.cat(((torch.cos(math.pi*Yposition[:,0])*torch.sin(math.pi*Yposition[:,1])).reshape(-1,1)\
-                         ,-(torch.cos(math.pi*Yposition[:,1])*torch.sin(math.pi*Yposition[:,0])).reshape(-1,1)),dim=0)
-    bg_flow_U=bg_flow_U.reshape(1,-1)    
-
-
+    bg_flow_U=Ut*torch.cat(((torch.cos(math.pi*Yposition[:,0]/(2.0))*torch.sin(math.pi*Yposition[:,1]/(2.0))).reshape(-1,1)\
+                         ,-(torch.cos(math.pi*Yposition[:,1]/(2.0))*torch.sin(math.pi*Yposition[:,0]/(2.0))).reshape(-1,1)),dim=0)
+    bg_flow_U=bg_flow_U.reshape(1,-1)     
     #print(Yposition,theta)
-    absU=cal_remaining_w(x.copy(),w)
-    
+
+    absU=w.copy()
     action=absU.copy() 
 #     absU[1]=absU[1]+absU[0]
 #     absU[2]=absU[2]+absU[1]
@@ -936,15 +908,15 @@ def initial(x,w,x_first):
 
 
     
-    action_absolute=torch.zeros((N-2),dtype=torch.double,device=device)
+    action_absolute=torch.zeros((N-1),dtype=torch.double,device=device)
 #     action_absolute[N1:N2]=absU[0]
 #     action_absolute[N2:N3]=absU[1]
 #     action_absolute[N3:]=absU[2]
 #    
 
 
-    for i in range(NL-2):
-        if i==NL-3:
+    for i in range(NL-1):
+        if i==NL-2:
             a=int(NI[i])            
             action_absolute[a:]=absU[i]
         else:
@@ -975,15 +947,15 @@ def initial_dense(x,w,x_first):
             beta_ini[i]+=beta_ini[i-1]    
    
 
-    theta=torch.zeros((N_dense+1),dtype=torch.double,device=device)
-    forQp=torch.ones((N_dense+1),dtype=torch.double,device=device)
+    theta=torch.zeros((N_dense+2),dtype=torch.double,device=device)
+    forQp=torch.ones((N_dense+2),dtype=torch.double,device=device)
     forQp[0]=Xini
     forQp[1]=Yini
 
     theta[0]=Xini
     theta[1]=Yini
 
-    for i in range(N_dense-1):
+    for i in range(N_dense):
         theta[i+2]=beta_ini[int((i)/(N_dense/NL))]    
 
 
@@ -1012,15 +984,15 @@ def RK(x,w,x_first):
     x_first_delta=np.zeros((2))
     x_fc=x_first.copy()
     Ypositions=np.zeros((NL+1))
-    Ntime=20
+    Ntime=10
     whole_time=0.2
     part_time=whole_time/Ntime
 #     print(x)
     for i in range(Ntime):
         #print(xc.shape,w.shape)
-        V,Vo,Xp,Yp,pressure_all=Calculate_velocity(xc, w,x_fc)
+        V,Vo,Xp,Yp,pressure_diff,pressure_end=Calculate_velocity(xc, w,x_fc)
         k1=part_time*V
-        V,Vo,Xp,Yp,pressure_all=Calculate_velocity(xc+0.5*k1, w,x_fc+0.5*part_time*Vo[:2])        
+        V,Vo,Xp,Yp,pressure_diff,pressure_end=Calculate_velocity(xc+0.5*k1, w,x_fc+0.5*part_time*Vo[:2])        
         
         #print(x_fc[0]**2+x_fc[1]**2)
         k2=part_time*V
@@ -1044,8 +1016,7 @@ def RK(x,w,x_first):
     #print(Yp.shape)
     #print(xc[0],xc[1])
     #print(pressure_diff)
-    
-    return xc , Xn ,r  ,x_first_delta,Xp,Yp,pressure_all
+    return xc , Xn ,r  ,x_first_delta,Xp,Yp,pressure_diff,pressure_end
     
     
     
