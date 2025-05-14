@@ -185,7 +185,7 @@ trainer= PPOTrainer(config=config, env=env)
 
 policy = trainer.get_policy()
 # policy.model.base_model.summary()
-print(policy.model)
+#print(policy.model)
 #print(policy.model.base_model.summary())
 # Print model summary
 
@@ -196,10 +196,10 @@ for i in range(5000):
 #     trainer.config["critic_lr"]=(1e-3)*(1-i/100)
 #     trainer.config["actor_lr"]=(1e-3)*(1-i/100)    
 #     trainer.config["tau"]=(1e-3)*(1-i/50)   
-    if i>0 and i%100==0:
-        env.__init__(env,{})
-        trainer=None
-        trainer= ppo.PPO(config=config, env=env)    
+#     if i>0 and i%100==0:
+#         env.__init__(env,{})
+#         trainer=None
+#         trainer= ppo.PPO(config=config, env=env)    
     result = trainer.train()
 #    path = os.path.join(cwd, str(i))
 #    if os.path.isdir(path)<0:
@@ -209,3 +209,4 @@ for i in range(5000):
 #     trainer.evaluate()
 #     print("checkpoint saved at", checkpoint)
 #trainer.export_policy_model(cwd)
+
