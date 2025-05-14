@@ -11,9 +11,10 @@ from math import cos
 import random
 import torch
 from ray.rllib.policy.policy import Policy
+from scipy.interpolate import griddata
 #import numba
 #from numba import jit, njit
-from dyna9_wall2_opt import RK, cal_remaining_w
+from calculate_v import RK, cal_remaining_w
 directory_path = os.getcwd()
 folder_name = path.basename(directory_path)
 # i=150
@@ -184,7 +185,7 @@ class swimmer_gym(gym.Env):
         data=np.loadtxt('alldata.txt')
         con_all=np.zeros(xy.shape[0])
         data=np.concatenate((data[:,0].reshape(-1,1),data[:,2:]),axis=1)
-        for i in xy.shape[0]:
+        for i in range(xy.shape[0]):
             pointa=xy[i,:]
             distances=np.linalg.norm(data[:,:2] - pointa.reshape(-1,2), axis=1)
             index_closest=np.argsort(distances)[:3]
@@ -674,5 +675,6 @@ class swimmer_gym(gym.Env):
         if self.viewer:
             self.viewer.close()
             self.viewer = None
+
 
 
