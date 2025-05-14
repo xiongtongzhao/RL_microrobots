@@ -330,7 +330,7 @@ class swimmer_gym(gym.Env):
         for i in range(N):
             for j in range(N):
                 if i!=j:
-                    if math.sqrt((Xpositions[i]-Xpositions[j])**2+(Ypositions[i]-Ypositions[j])**2)<0.6:
+                    if math.sqrt((Xpositions[i]-Xpositions[j])**2+(Ypositions[i]-Ypositions[j])**2)<0.6/N:
                                         
                              
                                                                             
