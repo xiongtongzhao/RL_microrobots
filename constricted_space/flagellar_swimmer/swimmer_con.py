@@ -171,7 +171,7 @@ class swimmer_gym(gym.Env):
         data=np.loadtxt('alldata.txt')
         con_all=np.zeros(xy.shape[0])
         data=np.concatenate((data[:,0].reshape(-1,1),data[:,2:]),axis=1)
-        for i in xy.shape[0]:
+        for i in range(xy.shape[0]):
             pointa=xy[i,:]
             distances=np.linalg.norm(data[:,:2] - pointa.reshape(-1,2), axis=1)
             index_closest=np.argsort(distances)[:3]
@@ -461,7 +461,7 @@ class swimmer_gym(gym.Env):
         else:
             self.order=np.random.randint(3)+3
 
-        print(self.order,'reset')
+        print(self.order)
         
      
         return self.order
@@ -479,5 +479,6 @@ class swimmer_gym(gym.Env):
         if self.viewer:
             self.viewer.close()
             self.viewer = None
+
 
 
