@@ -170,7 +170,7 @@ env.__init__(env,{})
 #trainer.restore(cwd2)
 #trainer = config.build(env=env)
 trainer= ppo.PPO(config=config, env=env)
-for i in range(100):
+for i in range(200):
     print(i)
 #     env.reset(env)
     #print(env.X)
