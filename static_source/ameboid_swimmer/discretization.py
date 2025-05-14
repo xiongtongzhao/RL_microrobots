@@ -3,8 +3,8 @@ import torch
 import math
 N=3
 NL=20
-dense_size=int(NL*8)
-sparse_size=int(NL*4)
+dense_size=int(NL*4)
+sparse_size=int(NL*2)
 wl=1
 def MatrixQp(L,theta,size):
         
