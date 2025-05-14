@@ -63,7 +63,7 @@ CcenterX=4
 CcenterY=0
 CcenterXc=0
 CcenterYc=4
-factor_con2=0.2
+factor_con2=0
 
 
 
@@ -401,9 +401,8 @@ class swimmer_gym(gym.Env):
             self.state=np.loadtxt('state.pt', delimiter=',')
             self.XY_positions=np.loadtxt('XY_positions.pt', delimiter=',')
             self.Xfirst=np.loadtxt('Xfirst.pt', delimiter=',')
-        con=self.get_concentration(self.XY_positions)
-        con=np.squeeze(con)
-        self.Clist=con.copy()        
+
+      
 
         #self.it=0
         
@@ -422,7 +421,9 @@ class swimmer_gym(gym.Env):
         
         con1=1/np.sqrt((np.squeeze(self.XY_positions[:,0])-CcenterX)**2+(np.squeeze(self.XY_positions[:,1])-CcenterY)**2)
         con2=factor_con2/np.sqrt((np.squeeze(self.XY_positions[:,0])-CcenterXc)**2+(np.squeeze(self.XY_positions[:,1])-CcenterYc)**2)        
-        con=np.squeeze(con1+con2)   
+        con=np.squeeze(con1+con2)
+        self.Clist=con.copy()          
+        
         self.con=np.sum(con)
         if con[0]<=con[-1]:
             self.order=np.random.randint(3)
@@ -447,5 +448,6 @@ class swimmer_gym(gym.Env):
         if self.viewer:
             self.viewer.close()
             self.viewer = None
+
 
 
