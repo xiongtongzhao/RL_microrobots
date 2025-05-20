@@ -1,4 +1,4 @@
-The codes will generate three directories (traj, traj2, trajp) to store the swimmer's data and one directory for saving policies. 
+The codes to achieve a chain swimmer's re-orientation will generate three directories (traj, traj2, trajp) to store the swimmer's data and one directory for saving policies. 
 
 In the "traj" directory, all files should be concatenated sequentially according to their indexes in the file names, forming a complete dataset of the swimmer's information.
 Each column corresponds to: X coordinate of centroid, Y coordinate of centroid, first link's global angle, angle at hinges
