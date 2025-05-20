@@ -311,12 +311,13 @@ class swimmer_gym(gym.Env):
           
         else:
             traj=np.concatenate((traj.reshape(-1,N+2),self.state_n.reshape(1,-1)),axis=0)
+        #each column corresponds to: X coordinate of centroid, Y coordinate of centroid, first link's global angle, angle at hinges
             
         if traj2==[]:
             traj2=m
         else:
             traj2=np.concatenate((traj2.reshape(-1,4),m.reshape(1,-1)),axis=0)
-            
+        #each column corresponds to: X coordinate of centroid, Y coordinate of centroid, X coordinate of the end at the first link, Y coordinate of the end at the first link
 #         if traj3==[]:
 #             traj3=mm
 #         else:
@@ -330,7 +331,8 @@ class swimmer_gym(gym.Env):
         if trajp==[]:
             trajp=pressure_all.reshape(1,-1)
         else:
-            trajp=np.concatenate((trajp,pressure_all.reshape(1,-1)),axis=0)            
+            trajp=np.concatenate((trajp,pressure_all.reshape(1,-1)),axis=0) 
+        #each column corresponds to:pressure at the end of the first link, pressure at all hinges, pressure at the end of the last link
 #         if     self.it%1000==0 :
 #             np.savetxt('traj.pt', traj, delimiter=',')        
 #             np.savetxt('traj2.pt', traj2, delimiter=',')            
