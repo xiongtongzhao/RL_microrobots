@@ -177,7 +177,8 @@ class swimmer_gym(gym.Env):
             index_closest=np.argsort(distances)[:3]
             nodes_data=data[index_closest]
             
-            con_all[i] = griddata(nodes_data[:,:2], nodes_data[:,2], (pointa[0],pointa[1]), method='linear')
+            concentration_inter=griddata(nodes_data[:,:2], nodes_data[:,2], (pointa[0],pointa[1]), method='nearest')
+            con_all[i] =concentration_inter if not np.isnan(concentration_inter) else 0.0
 
             
 
